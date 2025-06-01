@@ -1,0 +1,53 @@
+--- Panel 1: APIs with Highest Error Rates ---
+
+index=web_logs sourcetype=access_combined_wcookie status>=400
+| stats count as error_count by uri_path, status
+| sort 10 - error_count
+
+--- Panel 2: Error Trends by Status Code (30d) ---
+
+index=web_logs sourcetype=access_combined_wcookie status>=400
+| timechart span=1d count by status
+
+--- Panel 3: Slowest Performing Endpoints (ms) ---
+
+index=web_logs sourcetype=access_combined_wcookie status=200
+```Extract the response time field using regex from raw log data```
+| rex field=_raw " \"[^\"]+\" \d+ \d+ \"[^\"]*\" \"[^\"]*\" (?<response_time>\d+)"
+| stats avg(response_time) as average_response_time by uri_path
+| where average_response_time > 3000
+| eval average_response_time = round(average_response_time, 2)
+| sort limit=0 - average_response_time
+
+--- Panel 4: Requests by Device Type & Browser ---
+
+index=web_logs sourcetype=access_combined_wcookie 
+| eval Device=if(match(useragent, "Android|iPhone"), "Mobile", "Desktop") 
+| eval Browser = case(
+    match(useragent, "Firefox"), "Firefox",
+    match(useragent, "Chrome"), "Chrome",
+    match(useragent, "Safari"), "Safari",
+    match(useragent, "Edge"), "Edge",
+    1==1, "Other"
+    ) 
+| stats count by Device, Browser 
+| sort - count
+
+--- Panel 5: Top Active Clients (by IP) ---
+
+index=web_logs sourcetype=access_combined_wcookie
+| top limit=5 clientip showperc=f
+| rename clientip as "Top Active Clients"
+
+--- Panel 6: Suspicious Access Patterns (POST/PUT + 5xx) ---
+
+index=web_logs sourcetype=access_combined_wcookie method IN ("POST", "PUT") status>=500
+| stats count by clientip, method, uri_path, status
+| where count > 10
+| sort - count
+
+--- Panel 7: Simulated Alert: Historical 5xx Error Spikes ---
+
+index=web_logs sourcetype=access_combined_wcookie status>=500
+| timechart span=12h count as error_count
+| where error_count > 20
