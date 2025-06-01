@@ -27,3 +27,22 @@ This project showcases a custom Splunk dashboard built to monitor an internal ad
 ## ⚙️ SPL Queries Used
 
 📁 All queries are saved in [`queries/spl_queries.txt`](./queries/spl_queries.txt).
+
+---
+
+## 🧪 Dataset Info
+
+- Type: Synthetic Apache logs generated using a Python script
+- Data Range: Multi-month span (2023–2025)
+- Fields Used: uri_path, status, method, clientip, useragent, response_time
+
+---
+
+## 🛠️ Tools & Tech
+
+- Splunk Enterprise (60-day trial)
+- Custom Python log generator
+- SPL (Search Processing Language)
+- Dashboard XML & UI Editor
+
+---
