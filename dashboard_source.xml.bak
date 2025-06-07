@@ -115,7 +115,7 @@
 | stats avg(response_time) as average_response_time by uri_path
 | where average_response_time &gt; 3000
 | eval average_response_time = round(average_response_time, 2)
-| sort 0 - average_response_time</query>
+| sort limit=0 - average_response_time</query>
           <earliest>$timeRange.earliest$</earliest>
           <latest>$timeRange.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -168,7 +168,7 @@
     1==1, "Other"
     ) 
 | stats count by Device, Browser 
-| sort 0 - count</query>
+| sort - count</query>
           <earliest>$timeRange.earliest$</earliest>
           <latest>$timeRange.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -231,7 +231,7 @@
           <query>index=web_logs sourcetype=access_combined_wcookie method IN ("POST", "PUT") status&gt;=500
 | stats count by clientip, method, uri_path, status
 | where count &gt; 10
-| sort 0 - count</query>
+| sort - count</query>
           <earliest>$timeRange.earliest$</earliest>
           <latest>$timeRange.latest$</latest>
           <sampleRatio>1</sampleRatio>
