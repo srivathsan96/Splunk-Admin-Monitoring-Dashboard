@@ -17,7 +17,7 @@ index=web_logs sourcetype=access_combined_wcookie status=200
 | stats avg(response_time) as average_response_time by uri_path
 | where average_response_time > 3000
 | eval average_response_time = round(average_response_time, 2)
-| sort limit=0 - average_response_time
+| sort 0 - average_response_time
 
 --- Panel 4: Requests by Device Type & Browser ---
 
@@ -31,7 +31,7 @@ index=web_logs sourcetype=access_combined_wcookie
     1==1, "Other"
     ) 
 | stats count by Device, Browser 
-| sort - count
+| sort 0 - count
 
 --- Panel 5: Top Active Clients (by IP) ---
 
@@ -44,7 +44,7 @@ index=web_logs sourcetype=access_combined_wcookie
 index=web_logs sourcetype=access_combined_wcookie method IN ("POST", "PUT") status>=500
 | stats count by clientip, method, uri_path, status
 | where count > 10
-| sort - count
+| sort 0 - count
 
 --- Panel 7: Simulated Alert: Historical 5xx Error Spikes ---
 
